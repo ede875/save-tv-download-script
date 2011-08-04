@@ -2,6 +2,7 @@ VORAUSSETZUNGEN:
 
 - Python
 - das Pythonmodul "python-mechanize"
+- wget
 - ein Save.tv Account
 - eine Internetverbindung
 
