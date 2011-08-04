@@ -1,0 +1,15 @@
+SAVETV_DIR=/share/save.tv
+LOG_DIR=/tmp
+
+LOCK_FILE=$SAVETV_DIR/download.lock
+
+if [ -f $LOCK_FILE ]; then
+    exit
+fi
+
+touch $LOCK_FILE
+
+date >> $LOG_DIR/download.log
+/usr/bin/python $SAVETV_DIR/stvDld.py >> $LOG_DIR/download.log 2>&1
+
+rm $LOCK_FILE
