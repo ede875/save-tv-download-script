@@ -51,3 +51,5 @@ v.0.1 initiale Veroeffentlichung
 v.0.2 Anpassung an geänderte save.tv Seitenstruktur. 
       Verwendung von wget zum Download der Aufnahmen.
       Geänderte Verwaltung von Teildownloads
+v.0.3 Aufnahmen können nach erfolgreichem Download aus 
+      dem Videoarchiv gelöscht werden.
