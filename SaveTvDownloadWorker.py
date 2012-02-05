@@ -41,7 +41,6 @@ class SaveTvDownloadWorker:
 		alreadyDownloadedBytes = long(self.getAlreadyDownloadedBytes(filename))	
 		if alreadyDownloadedBytes == fileLength:
 			print "%s already downloaded, size: %s" %(filename, alreadyDownloadedBytes)
-			self.markFileAsFinished(filename, self.originalFilename)
 			return True
 		
 		if alreadyDownloadedBytes >= fileLength:
