@@ -1,7 +1,7 @@
 from mechanize import Browser
-import mechanize
 import re
-import time, socket
+import socket
+import urllib
 
 class SaveTvEntity:
 	SAVETV_URL = "http://www.save.tv"
@@ -50,15 +50,21 @@ class SaveTvEntity:
 			print "No download URL found (probably recording still in progress)."
 		return url
 
+	def deleteFile(self, telecastID):
+		post_data = urllib.urlencode({'lTelecastID' : telecastID})
+		response = self.browser.open("/STV/M/obj/user/usShowVideoArchive.cfm", post_data)
+		if response.code == 200:
+			print "File for telecast-ID %s deleted." %(telecastID)
+		
 	def initialiseLogin(self):
 		self.browser.open(self.SAVETV_URL)
-		response = self.browser.follow_link(self.browser.links(url_regex=".*index\.cfm.*").next())
+		self.browser.follow_link(self.browser.links(url_regex=".*index\.cfm.*").next())
 		#import pdb; pdb.set_trace()		
 		self.browser.select_form(nr=0)
 		self.browser["sUsername"] = self.username
 		self.browser["sPassword"] = self.password
 
-		response = self.browser.submit()	
+		self.browser.submit()	
 
 		response = self.browser.follow_link(self.browser.links(url_regex=".*miscShowHeadFrame.cfm.*").next())
 		p = re.compile("href=\"([^\"]*usShowVideoArchive[^\"]*)\"")

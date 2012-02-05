@@ -1,5 +1,4 @@
 import socket, urllib, os, sys, commands
-from threading import Timer
 
 
 class SaveTvDownloadWorker:
@@ -13,8 +12,6 @@ class SaveTvDownloadWorker:
 		self.username = pUsername
 
 	def download(self):
-		existSize = 0
-
 		myUrlclass = urllib.FancyURLopener()
 		socket.setdefaulttimeout(60)		
 		webPage = myUrlclass.open(self.dnldUrl)
@@ -33,11 +30,11 @@ class SaveTvDownloadWorker:
 		# save.tv seems to offer files for other users. Check and only accept files containing our username.
 		if (self.username not in filename):
 			print "File %s is not for me." %(filename)
-			return
+			return False
 
 		if (os.path.isfile(self.download_directory + filename)):
 			print "File %s already downloaded." %(filename)
-			return
+			return True
 
 		filename = filename + ".part"
 
@@ -45,11 +42,11 @@ class SaveTvDownloadWorker:
 		if alreadyDownloadedBytes == fileLength:
 			print "%s already downloaded, size: %s" %(filename, alreadyDownloadedBytes)
 			self.markFileAsFinished(filename, self.originalFilename)
-			return
+			return True
 		
 		if alreadyDownloadedBytes >= fileLength:
 			print "%s already present, but size is too big (file: %s, web: %s)" %(filename, alreadyDownloadedBytes, fileLength)
-			return
+			return False
 
 		print "Downloading %s with size %s (already downloaded: %s)" %(filename, fileLength, alreadyDownloadedBytes)
 
