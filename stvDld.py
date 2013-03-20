@@ -12,21 +12,25 @@ class SaveTvDownloader:
 		self.SAVETV_USERNAME = config.get('SaveTV', 'Benutzername')
 		self.SAVETV_PASSWORD = config.get('SaveTV', 'Passwort')
 		self.DOWNLOAD_DIRECTORY = os.path.normpath(config.get('System', 'Zielverzeichnis')) + os.sep
-		self.DELETE_AFTER_DOWNLOAD = config.getboolean('Optionen', 'DeleteAfterDownload') 
+		self.DELETE_AFTER_DOWNLOAD = config.getboolean('Optionen', 'DeleteAfterDownload')
+		try:
+			self.TIMEOUT = config.get('Optionen', 'Timeout')
+		except ConfigParser.NoSectionError:
+			self.TIMEOUT = 120   # default, if the optional Timeout parameter is not specified.
 
 	def doDownload(self):
-		svte = SaveTvEntity(self.SAVETV_USERNAME, self.SAVETV_PASSWORD)
+		svte = SaveTvEntity(self.SAVETV_USERNAME, self.SAVETV_PASSWORD, self.TIMEOUT)
 		svte.initialiseLogin()
 		availableRecordingIds = svte.fetchDownloadableTelecaseIds()
 		dlLinks = svte.getDownloadableRecordingLinks(availableRecordingIds)
 		for telecastID, link in dlLinks.iteritems():
-			downloader = SaveTvDownloadWorker(link, self.DOWNLOAD_DIRECTORY, self.SAVETV_USERNAME)
+			downloader = SaveTvDownloadWorker(link, self.DOWNLOAD_DIRECTORY, self.SAVETV_USERNAME, self.TIMEOUT)
 			file_complete = downloader.download()
 			if self.DELETE_AFTER_DOWNLOAD and file_complete:
 				svte.deleteFile(telecastID)
-		
+
 if __name__ == "__main__":
 	downloader = SaveTvDownloader()
 	downloader.readConfiguration()
-	downloader.doDownload()		
-		
+	downloader.doDownload()
+
