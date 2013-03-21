@@ -6,18 +6,15 @@ from SaveTvDownloadWorker import SaveTvDownloadWorker
 
 class SaveTvDownloader:
 	def readConfiguration(self):
-		config = ConfigParser.RawConfigParser()
+		config = ConfigParser.RawConfigParser({'Timeout': '120', 'DeleteAfterDownload' : 'no'})
 		config.read(os.path.dirname(os.path.realpath(__file__)) + '/savetv.cfg')
 		
 		self.SAVETV_USERNAME = config.get('SaveTV', 'Benutzername')
 		self.SAVETV_PASSWORD = config.get('SaveTV', 'Passwort')
 		self.DOWNLOAD_DIRECTORY = os.path.normpath(config.get('System', 'Zielverzeichnis')) + os.sep
 		self.DELETE_AFTER_DOWNLOAD = config.getboolean('Optionen', 'DeleteAfterDownload')
-		try:
-			self.TIMEOUT = config.get('Optionen', 'Timeout')
-		except ConfigParser.NoSectionError:
-			self.TIMEOUT = 120   # default, if the optional Timeout parameter is not specified.
-
+		self.TIMEOUT = config.get('Optionen', 'Timeout')
+		
 	def doDownload(self):
 		svte = SaveTvEntity(self.SAVETV_USERNAME, self.SAVETV_PASSWORD, self.TIMEOUT)
 		svte.initialiseLogin()
